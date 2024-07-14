@@ -50,6 +50,7 @@ Windows:
 from zoltraakklein import ZoltraakKlein
 
 # ZoltraakKleinのインスタンスを作成
+# 'anthropic' はラベルなので任意の文字列をセット可能
 zk = ZoltraakKlein(
     request="ウェブアプリケーションの要件定義書を作成してください",
     compiler="dev_sw",
