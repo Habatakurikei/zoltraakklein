@@ -1,3 +1,5 @@
+![Zoltraak Klein Logo](https://repository-images.githubusercontent.com/828559799/cf060405-3975-49a2-987b-6d22ee7528cc)
+
 # ZoltraakKlein
 
 ZoltraakKleinは、大規模言語モデル（LLM）を使用して要件定義書を生成するためのPythonライブラリです。このライブラリは、ユーザーのリクエストに基づいて要件定義書のファイル名と内容を自動生成し、必要に応じて領域展開を行うことができます。
