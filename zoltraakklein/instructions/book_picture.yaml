@@ -1,0 +1,19 @@
+1:
+  cover_image: image_stable_diffusion(rd,landscape)
+  src: writer(rd,picture_book)
+2:
+  page_speech: voice_voicevox(src)
+  image_prompt: writer(rd,image_prompt)
+  character_rd: virtual_character(rd)
+3:
+  page_image: image_stable_diffusion(image_prompt,landscape)
+  character_voice: voice_voicevox(character_rd)
+4:
+  character_image: image_stable_diffusion(character_rd,square)
+  presentation: marp_presentation(rd,picture_book,src,cover_image,page_image)
+  epub_picture: epub_picture(rd,src,cover_image,page_image)
+5:
+  video_presentation: video_from_presentation(rd,presentation,page_speech)
+6:
+  3d_model: 3d_meshy(character_rd)
+  video_pikapikapika: video_pikapikapika(rd,Anime)

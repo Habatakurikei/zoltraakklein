@@ -1,0 +1,19 @@
+{
+  "3d_meshy": "3Dモデル生成 (Meshy)",
+  "architect_common": "アーキテクト基底クラス",
+  "epub": "一般電子書籍生成 (EPUB)",
+  "epub_picture": "絵本電子書籍生成 (EPUB)",
+  "image_dalle": "画像生成 (Dall-E)",
+  "image_stable_diffusion": "画像生成 (Stable Diffusion)",
+  "image_unsplash": "画像検索(Unsplash)",
+  "marp_content": "プレゼンコード(Marp形式)生成",
+  "marp_presentation": "プレゼン資料生成 (marp, PDF, PPTX, PNG)",
+  "marp_speech": "プレゼン資料からスピーチ文生成",
+  "mermaid_chart": "マーメイド記法からチャート生成",
+  "video_from_presentation": "文章と音声を合成してプレゼン動画生成",
+  "video_pikapikapika": "動画生成 (PikaPikaPIka)",
+  "virtual_character": "キャラクター要件定義書の追加生成",
+  "voice_elevenlabs": "音声合成 (ElevenLabs)",
+  "voice_voicevox": "音声合成 (Voicevox)",
+  "writer": "文章／コード生成"
+}

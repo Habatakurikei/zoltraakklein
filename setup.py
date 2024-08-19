@@ -5,15 +5,21 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="zoltraakklein",
-    version="0.1.0",
+    version="1.0.0",
     author="Daisuke Yamaguchi",
     author_email="daicom0204@gmail.com",
     description="A simplified class for Zoltraak.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Habatakurikei/zoltraakklein",
+    url="https://pypi.org/project/zoltraakklein/",
+    project_urls={
+        'Homepage': 'https://habatakurikei.com/',
+        'GitHub': 'https://github.com/Habatakurikei/zoltraakklein',
+    },
     packages=setuptools.find_packages(),
-    package_data={'': ['*']},
+    package_data={
+        'zoltraakklein': ['architect/*','compilers/*', 'instructions/*', 'prompts/*', 'rosetta/*', 'templates/**/*'],
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -27,7 +33,9 @@ setuptools.setup(
     ],
     python_requires=">=3.9",
     install_requires=[
-        "llmmaster>=0.1.0",
+        "llmmaster>=0.3.4",
+        "opencv-python>=4.10.0.84",
+        "moviepy>=1.0.3",
     ],
     extras_require={
         "dev": [

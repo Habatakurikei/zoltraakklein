@@ -2,165 +2,394 @@
 
 # Zoltraak Klein
 
-Zoltraak Klein （ゾルトラーク・クライン）は「小さいゾルトラーク」を意味し、ゾルトラークのエッセンスを取り出してコンパクトなクラスにしたものです。ゾルトラークがどのように動いているのか学習できるように日本語解説が付けられています。
+Zoltraak is a production framework for digital contents like program codes, images, speeches, presentations, books and videos, by working with Large Language Models (LLMs) and generative AIs.
 
-Zoltraak は大規模言語モデル (LLM) を使用して要件定義書を生成するための Python ライブラリです。このライブラリはユーザーのリクエストに基づいて要件定義書のファイル名と内容を自動生成し、必要に応じてコード生成（領域展開）を行うことができます。
+Link to the original project: [Zoltraak](https://github.com/dai-motoki/zoltraak)
 
-## どうやって動く？
+This project was pioneered by Daisuke Motoki [@dai-motoki](https://github.com/dai-motoki/). The original system was a command line tool and was sophisticated for generating SaaS project with codes.
 
-![how-zoltraak-works](https://github.com/user-attachments/assets/2a620fed-bb82-491d-ae33-62d053a0299c)
+Zoltraak Klein ("Small Zoltraak"), ZK in short, is a compact version of the Zoltraak system, designed as a python class to demonstrate the core functionalities of Zoltraak in a more accessible format.
 
-Zoltraak の基本動作はこの3ステップです。
+You might notice that Zoltraak derives from a popular spell in Japanese anime/manga "Frieren: Beyond Journey's End".
 
-1. リクエスト内容を反映した要件定義書 **ファイル名命名**
-2. リクエスト内容を反映した要件定義書の **本文生成**
-3. 要件定義書を元に **コード等一括生成** （領域展開）
+## Features
 
-さらに細かい動作まで解説すると上図のようになります。
+- Project naming and initialization
+- Generation of "Requirement Document" or "Requests Definition" (RD in short)
+- Directory and file generation (explain details later)
+- Support for multiple AI models thanks to [LLMMaster](https://github.com/Habatakurikei/llmmaster)
+- Various types of digital contents generation
 
-Zoltraak Klein は各ステップをクラスメソッドにして処理をできるだけ簡略化しました。 Zoltraak の動作を学べるように配慮しました。
+## Supported Contents to Generate
 
-もちろん動くのであなたが欲しい要件定義書を生成することができます。
+![zk-compiler-list-20240817-EN](https://github.com/user-attachments/assets/3a11d4a4-28b6-4bc4-90f5-3e972021fc3b)
 
-## 特徴
+Zoltraak first generates a RD, then starts to generate contents based on the RD. This process is called "Domain Expansion".
 
-- 複数のAIモデル（OpenAI、Anthropicなど）をサポート
-- カスタマイズ可能なプロンプトとコンパイラ
-- 要件定義書のファイル名自動生成
-- 要件定義書の内容自動生成
-- 将来的な領域展開機能（開発中）
+The following contents are supported to generate:
 
-## インストール
+- Business Documents (including mermaid diagrams):
+  - General business proposal
+  - Business plan
+  - Consulting proposal
+  - Marketing research
+  - Business negotiation supporting document
+- Multimedia contents:
+  - Web articles (with eye-catching image)
+  - Presentation slides with Marp (with cover image)
+  - Virtual character (with icon, voice and 3D model)
+  - Technical book in Epub/PDF format (with cover image and speech audio)
+  - Business book in Epub/PDF format, vertically written for Japanese (with cover image and speech audio)
+  - Picture book in Epub/PDF format, suitable for children (with images and speech audio)
+- Life Style:
+  - Cooking recipes (with image)
+  - Travel plans (with schedule and image)
+  - Outfit recommendations (with image)
+- System Development:
+  - Project requirements document (with mermaid diagram)
+  - Minimum Viable Product consultation document (with mermaid diagram)
+  - Project of software or program codes
 
-```bash
+Note that multimedia contents are not generated in one time but step by step. It may take over 5 minutes to generate all contents.
+
+## Requirements
+
+- Python 3.9 or later
+- The following external content generation tools, including npm (Node.js), are necessary:
+  - [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
+  - [Marp CLI](https://github.com/marp-team/marp-cli)
+  - [Voicevox](https://voicevox.hiroshiba.jp/)
+
+Confirmed the latest version of Zoltraak Klein works with the following versions:
+
+- Python 3.12.4
+- Node.js v20.15.0
+- npm 10.7.0
+- marp-cli v3.4.0
+- mermaid-cli (mmdc) v10.9.1
+- Voicevox 0.15.4 (as core version)
+
+## Installation
+
+Install Zoltraak Klein using pip:
+
+```
 pip install zoltraakklein
 ```
 
-## 事前環境設定
+## API Key settings
 
-APIキーを環境変数に設定してください。
+Set up your API keys as environment variables. Minimum requirement is OpenAI API key as default LLM for RD generation.
 
-あなたが使いたいプロバイダーのAPIだけをセットしてください。下記のすべてをセットする必要はありません。
+If you want all the supported data formats of domain expansion, you will need correspondent API keys. In case of missing API keys, an error causes while generating.
 
-Mac/Linux:
+The following list shows the acceptable API keys:
 
-   ```
-   export ANTHROPIC_API_KEY="your_anthropic_key"
-   export GEMINI_API_KEY="your_gemini_key"
-   export GROQ_API_KEY="your_groq_key"
-   export OPENAI_API_KEY="your_openai_key"
-   export PERPLEXITY_API_KEY="your_perplexity_key"
-   ```
+- [OpenAI](https://platform.openai.com/)
+- [Anthropic](https://console.anthropic.com/)
+- [Google](https://ai.google.dev/)
+- [Perplexity](https://docs.perplexity.ai/)
+- [Groq](https://console.groq.com/keys)
+- [Stable Diffusion](https://platform.stability.ai/)
+- [Meshy](https://docs.meshy.ai/)
+- [Elevenlabs](https://elevenlabs.io/api)
+- [Pika.art (third-party API)](https://www.pikapikapika.io/)
 
-Windows:
+For Mac/Linux,
 
-   ```
-   SET ANTHROPIC_API_KEY=your_anthropic_key
-   SET GEMINI_API_KEY=your_gemini_key
-   SET GROQ_API_KEY=your_groq_key
-   SET OPENAI_API_KEY=your_openai_key
-   SET PERPLEXITY_API_KEY=your_perplexity_key
-   ```
+```
+export ANTHROPIC_API_KEY="your_anthropic_key"
+export GOOGLE_API_KEY="your_google_key"
+export GROQ_API_KEY="your_groq_key"
+export OPENAI_API_KEY="your_openai_key"
+export PERPLEXITY_API_KEY="your_perplexity_key"
+export STABLE_DIFFUSION_API_KEY="your_stable_diffusion_key"
+export MESHY_API_KEY="your_meshy_key"
+export ELEVENLABS_API_KEY="your_elevenlabs_key"
+export PIKAPIKAPIKA_API_KEY="your_pikapikapika_key"
+```
 
-## 使用方法
+For Windows (cmd),
 
-### 基本的な使用例
+```
+SET ANTHROPIC_API_KEY=your_anthropic_key
+SET GOOGLE_API_KEY=your_google_key
+SET GROQ_API_KEY=your_groq_key
+SET OPENAI_API_KEY=your_openai_key
+SET PERPLEXITY_API_KEY=your_perplexity_key
+SET STABLE_DIFFUSION_API_KEY=your_stable_diffusion_key
+SET MESHY_API_KEY=your_meshy_key
+SET ELEVENLABS_API_KEY=your_elevenlabs_key
+SET PIKAPIKAPIKA_API_KEY=your_pikapikapika_key
+```
+
+For Windows (PowerShell)
+
+```
+$env:ANTHROPIC_API_KEY="your_anthropic_key"
+$env:GOOGLE_API_KEY="your_google_key"
+$env:GROQ_API_KEY="your_groq_key"
+$env:OPENAI_API_KEY="your_openai_key"
+$env:PERPLEXITY_API_KEY="your_perplexity_key"
+$env:STABLE_DIFFUSION_API_KEY="your_stable_diffusion_key"
+$env:MESHY_API_KEY="your_meshy_key"
+$env:ELEVENLABS_API_KEY="your_elevenlabs_key"
+$env:PIKAPIKAPIKA_API_KEY="your_pikapikapika_key"
+```
+
+## Usage
+
+Zoltraak Klein has only 3 steps:
+
+1. Create a new project with name from your request
+2. Generate RD from your request
+3. Expand the domain for your project, meaning generating contents and directories
+
+Note that multiple times of expansion is required for some content types. You might need to call expand_domain() multiple times. Explain details later.
+
+Once a new project is created, you are not able to go back to the previous step. If you want to change the request, you need to create another project from scratch.
+
+See folder [sample_codes](sample_codes) for downloadable files. Arranged `zk_sample.py` suitable for demonstration.
+
+### Minimal usage of Zoltraak Klein
 
 ```python
 from zoltraakklein import ZoltraakKlein
 
-# ZoltraakKleinのインスタンスを作成
-# llm はただの識別ラベルなので任意の文字列をセット可能
-# request, compiler, provider の3つは必須
-# model, temperature, max_tokens は無くても動きます
+# Make an instance of ZoltraakKlein
 zk = ZoltraakKlein(
-    request="腕時計比較ウェブサイトの要件定義書を作成してください",
-    compiler="dev_sw",
-    llm={
-        "provider": "openai",
-        "model": "gpt-4o",
-        "max_tokens": 4096,
-        "temperature": 0.5
-    }
+    request="Cloud-based AI-driven accounting system",
+    compiler="project_rd",
+    verbose=True
 )
 
-# 要件定義書の生成
+# Cast Zoltraak (run all the steps, including one time of domain expansion)
 zk.cast_zoltraak()
-
-# 生成された要件定義書のパスを表示、生成物の中身を確認してください
-# 'C:\\Users\\daisuke\\Downloads\\zoltraakklein\\requirements\\def_watch_website.md' など
-print(f"生成された要件定義書: {zk.requirement_path}")
 ```
 
-### 解説
+In Zoltraak, prompt is often called request (`request`). Keep in mind that OpenAI API key is set before creating this instance.
 
-`provider` は `anthropic`, `openai`, `google`, `groq`, `perplexity` から指定してください。
+Zoltraak prepares compiler (`compiler`) to expand content of your request instead of long prompts. Any long sentences, so called prompts, are not welcome.
 
-`model` は各社のAPIドキュメントで定義されているモデル名称を指定してください。例： `claude-3-5-sonnet-20240620`, `gemini-1.5-flash`
+Compiler is a template to generate RD, necessary items to be filled out are already written in it. By merging your request with an appropriate `compiler`, Zoltraak generates a better RD.
 
-`compiler` についてはこちらの [コンパイラリスト](https://github.com/Habatakurikei/zoltraakklein/tree/main/zoltraakklein/compiler) に全コンパイラが保管されています。ローカル魔法図書館とでも呼びましょうか。
+One of the important conceptual points is that digital contents can be generated with a short message by users. This means users can easily generate contents with short request like a spell. This is why Zoltraak is occasionally called "The magical creation framework" in Japan.
 
-ただし多くて何を選べばわからないと思います。 [ウェブアプリ](https://zoltraak.app) で使用しているコンパイラのリストがこちらになります。この中からお選びいただくだけでかなり活用できると思います。
+You may need to update your mindset of how we shall work with generative AIs in a more relaxed way.
 
-- 企画書 (`general_proposal`): 企画書を生成します。各種ビジネス、イベント、プロジェクト、教育・研究、芸術・文化、非営利活動、政策立案などに活用できます。
-- 戦略的コンサル資料 (`biz_consult`): ビジネスコンサルティングに関する資料を生成します。課題出し、評価方法、クラス図、収益モデル、計画、フェルミ推定などを生成します。
-- 市場調査 (`marketing_research`): 市場規模、成長率、トレンド、潜在顧客とニーズ、競合調査、ステークスホルダーの情報を生成します。
-- 商談資料（段取り） (`business_negotiation`): 商談をスムーズに進めるための顧客理解、競合、ヒヤリング案、事前準備、契約条件、スケジュール、予算、シナリオを生成します。
-- プレゼン資料 (`presentation_reveal`): プレゼン資料の構成と納期や予算を提案します。領域展開で Reveal.js によるスライド一式を生成します。
-- 書籍 (`book_epub`): 書籍を執筆します。ビジネス書、小説などジャンルは問いません。概要、想定読者、目次などを提案します。領域展開で本文を含む EPUB 形式の電子書籍パッケージも生成できます。
-- ネット記事アイデア出し (`web_article`): ブログ、解説、ニュースなどのネット記事のアイデアを生成。タイトル、図解、見出し構成、読者から共感を得られるポイントなどを提案します。
-- キャラクター設定生成 (`virtual_human`): VTuber, AIモデル, 小説の登場人物, アバターなどキャラクター設定情報を生成します。名前、年齢、性別、出身地、職業、役割、外見、性格、口癖、交友関係、能力などを提案します。
-- プロジェクト要件定義 (`general_def`): 一般的な開発タスクに関する要件定義書を生成します。
-- ソフトウェア (`dev_sw`): 一般的なソフトウェアを生成します。細かく指定したい場合は「 Python, JavaScript, C++, PyPI, Wordpress, ウェブアプリ, スマホアプリ」などをプロンプトで指定します。領域展開で複数ファイルとディレクトリ一式を生成します。
-- ホームページ (`dev_hp`): ホームページの全体構成について要件定義書を生成します。デザイン、素材、UI構造などを提案します。領域展開で関連コードを一式生成します。
-- MVPシステム開発提案 (`dev_akirapp`): 何かを開発したいけどどうしたらいいのかわからない場合このコンパイラを使います。必要最小限の機能を持ったプロダクト (MVP: Minimum Viable Product) の考え方に基づいて提案します。 Special Thanks あきらパパさん
-- レシピ考案 (`cooking_recipe`): 料理のレシピを考案します。コンセプト、味、見た目、材料、調理時間、調理方法、器具、予算、保存方法などを提案します。
-- コーディネート相談 (`outfit_idea`): シチュエーションに合わせた服装、ヘアスタイル、お化粧のポイント、持ち物、アクセサリー類などを提案をします。
-- 旅のしおり (`travel_plan`): 国内・国外の旅行計画を提案します。目的、交通手段、宿泊先、予算、観光スポット、現地グルメ、持ち物、現地で気を付けるべきマナーなどを提案します。
+The last initial argument is `verbose`. If True, the process is displayed on the console. Default is False.
+
+With `cast_zoltraak()`, the instance executes project naming, RD generation and a single time of domain expansion. For most of cases, especially business documents, one time of expansion is enough to generate documents and supporting charts.
+
+After execution, a new directory (`project`) is created in the current working directory. And your project folder is generated under `project` folder. The directory name is the project name assigned in Step 1. All the generated contents are stored in that project folder.
+
+### Individual steps
+
+Possible to call individual steps:
+
+```python
+import time
+from zoltraakklein import ZoltraakKlein
+from zoltraakklein.yaml_manager import YAMLManager
 
 
-## 主要なクラスと関数
+zk = ZoltraakKlein(
+    request="Short-hair Japanese bartender girl in 20s, anime-style",
+    compiler="virtual_human",
+    verbose=True
+)
 
-### ZoltraakKlein
+# Step 1: Name the requirement
+zk.name_for_requirement()
 
-メインクラスで、要件定義書の生成プロセスを管理します。
+# Step 2: Generate the requirement
+zk.generate_requirement()
 
-#### メソッド
+# Step 3: Expand the domain
+while zk.is_expansion_capable():
+    try:
+        zk.expand_domain()
+        while zk.expansion_in_progress:
+            time.sleep(1)
+    except Exception as e:
+        print(e)
+        break
 
-- `__init__(self, request='', compiler='', expand=False, **kwargs)`: インスタンスを初期化します。
-- `cast_zoltraak(self)`: 要件定義書の生成プロセス全体を実行します。
-- `name_for_requirement(self)`: 要件定義書のファイル名を生成します。
-- `generate_requirement(self)`: 要件定義書の内容を生成します。
-- `expand_domain(self)`: 領域展開を行います（現在開発中）。
+# Show the result
+if zk.project_menu.exists():
+    menu = YAMLManager(str(zk.project_menu))
+    print('Menu (list of generated items) is ready.')
+    print(zk.project_menu.read_text(encoding="utf-8"))
+    print(f'Total {menu.sum_of_items()} files generated.')
 
-メインは `cast_zoltraak()` ですが各メソッド単体でも呼び出しできます。ただし自己責任でご利用ください。
+print(f'Elapsed time for each step (sec) = {zk.takt_time}')
+print(f'Total elapsed time (sec) = {sum(zk.takt_time)}')
+```
 
-### その他の機能
+Each domain expansion takes time, better to set a timer for status check as shown in Step 3. Especially for picture books, it may take around 10 minutes until full contents generation.
 
-- `seek_compiler(name='')`: 指定されたコンパイラファイルを検索します。
+### Advanced usage
 
-## 設定
+Zoltraak Klein accepts different LLMs for project naming and RD generation separately.
 
-`config.py`ファイルで以下の設定を変更できます：
+Below is an example to set a different LLM from the default. ZK will work with the given LLM for both project naming and RD generation.
 
-- デフォルトのAIプロバイダーとモデル
-- 各種パスの設定
-- プロンプトファイルの指定
-- 領域展開可能なコンパイラのリスト
+```python
+from zoltraakklein import ZoltraakKlein
 
-## 注意事項
+request = "Luxury Watches"
+compiler = "marketing_research"
 
-- [`LLMMaster`](https://github.com/Habatakurikei/llmmaster) をベースに作成しているため複数のAIモデルで要件定義書複数並列生成もできます。この場合、最初に指定したモデルの生成物のみが`self.file_name`と`self.requirement_path`に格納されます。ただしこれは上級者向けなのであまり真似しないでください。
-- 領域展開機能は現在開発中です。
+llm = {'google': {'provider': 'google',
+                  'model': 'gemini-1.5-flash',
+                  'max_tokens': 10000,
+                  'temperature': 0.3}}
 
-## ライセンス
+zk = ZoltraakKlein(request=request,
+                   compiler=compiler,
+                   verbose=True,
+                   **llm)
+zk.cast_zoltraak()
+```
 
-このプロジェクトはMITライセンスの下で公開されています。詳細については、[LICENSE](LICENSE)ファイルを参照してください。
+Another example below uses different LLMs for naming and RD generation separately.
 
-## コントリビューション
+```python
+from zoltraakklein import ZoltraakKlein
 
-プロジェクトへの貢献に興味がある方は、イシューやプルリクエストを歓迎します。
+request = "A new sports apparel brand for young men and women"
 
-## サポート
+compiler = "business_plan"
 
-問題や質問がある場合は、GitHubのイシューを作成してください。
+zk = ZoltraakKlein(request=request,
+                   compiler=compiler,
+                   verbose=True)
+
+llm_naming = {'naming': {'provider': 'anthropic',
+                         'model': 'claude-3-haiku-20240307'}}
+zk.name_for_requirement(**llm_naming)
+
+llm_req = {'openai': {'provider': 'openai',
+                      'model': 'gpt-4o'},
+           'anthropic': {'provider': 'anthropic',
+                         'model': 'claude-3-haiku-20240307'},
+           'google': {'provider': 'google',
+                      'model': 'gemini-1.5-flash'}}
+zk.generate_requirement(**llm_req)
+
+zk.expand_domain()
+```
+
+This case will generate 3 RDs for each LLM under `project` folder. Each key name in `llm_req` is used for part of RD file name to avoid conflict.
+
+Although you can select LLM for project naming and RD generation, any content generation during domain expansion will be done by dedicated LLM and generative AI defined by the system.
+
+## Terminology
+
+There are still hidden terms to understand Zoltraak better.
+
+- Request: short sentence or keywords of what you want instead of long prompt
+- Compiler: template to expand your request so that Zoltraak generates better RD
+- RD: "Required Document" or "Requirements Definition"
+- Domain Expansion: process of generating directories and files based on RD
+- Menu: list of generated contents, recording file location, in YAML format
+- Architect: an individual python script to generate digital contents
+- Instruction: a document that states steps and processes of domain expansion for each compiler, in YAML format as a pair of compiler
+- Library (Magic Library): conceptual term of folders containing templates, architects and instructions
+- [LLMMaster](https://github.com/Habatakurikei/llmmaster): a python library that consolidates various LLMs and generative AIs for digital content generation
+
+**Important**: compiler and instruction must always be a pair. For proper content generation, name of `compiler` and `instruction` must be coinsident. For example, there are `book_picture.md` in compilers folder and `book_picture.yaml` in instructions folder.
+
+## Compiler List
+
+Set one of the following compilers as `compiler` argument to generate RD.
+
+- Business Documents:
+  - `general_proposal`: Generates diverse proposals for businesses, events, projects, education, research, arts, culture, non-profit activities, and policy planning.
+  - `business_plan`: Creates comprehensive business plans at the company or organizational level, including materials for investors.
+  - `strategic_consultant`: Produces business consulting materials, including assignments, evaluation methods, class diagrams, revenue models, plans, and Fermi estimates.
+  - `marketing_research`: Provides market analysis, including size, growth rate, trends, potential customers, needs, competitive research, and stakeholder information.
+  - `business_negotiation`: Prepares materials for successful business negotiations, covering customer understanding, competition analysis, proposal evaluation, contract terms, schedules, and budgets.
+- Multimedia contents:
+  - `web_article`: Creates online content such as blogs, commentaries, and news articles, with suggestions for titles, illustrations, headline structure, and engaging points.
+  - `virtual_character`: Develops detailed character profiles for VTubers, AI models, novel characters, and avatars, including personal details, appearance, personality, and abilities.
+  - `presentation_marp`: Generates presentation materials as a requirements specification document, producing slides in various formats (marp, PDF, PPTX, PNG) and presentation videos with audio.
+  - `book_business`: Creates vertically written business books, including outline, target audience, table of contents, and multiple format outputs (EPUB, PDF, audiobook).
+  - `book_technical`: Produces horizontally written technical books on specific scientific or technological topics, with outline, target audience, table of contents, and multiple format outputs.
+  - `book_picture`: Designs children's picture books with full hiragana text, illustrations on each page, and multiple format outputs, including read-aloud video.
+- Life Style:
+  - `cooking_recipe`: Develops comprehensive cooking recipes, including concept, taste, appearance, ingredients, cooking methods, utensils, budget, and storage tips.
+  - `travel_plan`: Creates detailed domestic and international travel itineraries, covering destinations, transportation, accommodations, budget, attractions, local cuisine, and cultural tips.
+  - `outfit_idea`: Suggests complete outfit concepts, including clothing, hairstyles, makeup, accessories, and items to bring for specific situations.
+- System Development:
+  - `project_rd`: Generates system development requirements specifications, including related diagrams such as system configuration, business flow, and data flow charts.
+  - `software_development`: Produces requirements specifications for software or websites, with the ability to generate multiple source code files and directory structures.
+  - `akira_papa`: Provides consultation and development approach suggestions based on the Minimum Viable Product (MVP) concept for those unsure how to proceed with their product ideas.
+
+## Required API keys for each content type during domain expansion
+
+While you can choose LLMs for project naming and RD generation, you need to set up API keys for LLMs used during domain expansion.
+
+The following list shows the required API keys for each content type during domain expansion.
+
+- Business Documents: API not required but Mermaid CLI is required for chart generation.
+- Multimedia contents:
+  - `web_article`: OpenAI API key for Dall-E image generation.
+  - `virtual_character`: OpenAI (image), Voicevox (voice), and Meshy (3D model)
+  - `presentation_marp`: OpenAI (image), Voicevox (voice), marp CLI (presentation), and PikaPikaPika (video)
+  - `book_business`: OpenAI (image), Voicevox (voice), marp CLI (presentation), and PikaPikaPika (video)
+  - `book_technical`: OpenAI (image), Voicevox (voice), marp CLI (presentation), and PikaPikaPika (video)
+  - `book_picture`: OpenAI (character icons), Stable Diffusion (page images), Voicevox (voice), marp CLI (presentation), Meshy (3D model), and PikaPikaPika (video)
+- Life Style:
+  - `cooking_recipe`: OpenAI API key for Dall-E image generation.
+  - `travel_plan`: OpenAI API key for Dall-E image generation. And Mermaid CLI is required for timetable generation.
+  - `outfit_idea`: OpenAI API key for Dall-E image generation.
+- System Development: API not required but Mermaid CLI is required for chart generation.
+
+These are defined by the system. If you want to change them, you need to modify the corresponding pair of architect python code and instruction. See also Terminology.
+
+## Project Structure
+
+- zoltraakklein
+  - `__init__.py`: library initialization
+  - `config.py`: Settings and constants (reserved words) for the project
+  - `utils.py`: Utility functions for file operations and AI interactions
+  - `yaml_manager.py`: YAML file management class, which is used for menu and instruction management
+  - `zoltraakklein.py`: Main class implementing ZoltraakKlein functionality
+  - `architect`: folder of python codes to work as architect (content generation)
+  - `compilers`: folder of templates to generate RD for each content type
+  - `instructions`: folder of instruction YAML files for each content type
+  - `prompts`: folder of "prompt" templates sending to LLMs and generative AIs
+  - `rosetta`: folder of supporting text files for translation
+  - `templates`: folder of code templates for marp slides and other content types
+- `tests`: folder of test codes for pytest
+- `pytest.ini`: settings for pytest
+- `README.md`: this file
+- `README_JA.md`: Japanese version of this description but not up-to-date information
+- `setup.py`: setup file for PyPI packaging
+
+## Advanced Usage
+
+### Scalability
+
+Zoltraak Klein itself is a framework.
+
+You can expand functionality (digital contents production) by adding your own architects and instructions.
+
+**Important**: never change or delete files in folders of architect, compilers, instructions, so called "Library". This may cause a serious error.
+
+### Start domain expansion from certain point
+
+Zoltraak Klein does not allow going back the process, but allow resuming domain expansion at a certain point.
+
+If necessary, call member function `load_project()` after ZK instance initialization with a correct compiler (instruction). Indicate your project name in project folder and resuming point of step number existing in the instruction.
+
+Restarting content generation is possible if the previous expansion is successful but failed at current point. The developer does not recommend using this function because `load_project` was arranged for debug purpose.
+
+## License
+
+Following the original Zoltraak project, this project is also licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+Thanks to all contributors and users of the Zoltraak project, especially Daisuke Motoki.

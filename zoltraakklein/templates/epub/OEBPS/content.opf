@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<package
+  xmlns="http://www.idpf.org/2007/opf"
+  prefix="ebpaj: http://www.ebpaj.jp/"
+  unique-identifier="unique-id"
+  version="3.0"
+  xml:lang="ja"
+>
+
+<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+<dc:identifier id="unique-id">urn:uuid:$uuid_code</dc:identifier>
+<dc:title>$title</dc:title>
+<dc:creator xmlns:opf="http://www.idpf.org/2007/opf" opf:role="aut">創造魔法ゾルトラーク</dc:creator>
+<dc:publisher>大陸魔法協会</dc:publisher>
+<dc:language>ja</dc:language>
+<dc:date xmlns:opf="http://www.idpf.org/2007/opf" opf:event="modification">2024-08-01</dc:date>
+<meta property="file-as" refines="#title">Grimoire</meta>
+<meta property="file-as" refines="#creator01"></meta>
+<meta property="display-seq" refines="#creator01">1</meta>
+<meta property="role" refines="#creator01" scheme="marc:relators">The Magical Creation Framework Zoltraak</meta>
+<meta property="file-as" refines="#publisher">Continental Magic Association</meta>
+<meta property="dcterms:modified">2024-08-01T00:00:00Z</meta>
+<meta property="ebpaj:guide-version">1.1.3</meta>
+<meta content="0.7.4" name="Sigil version" />
+</metadata>
+
+<manifest>
+<item href="Text/navigation.xhtml" id="navigation.xhtml" media-type="application/xhtml+xml" properties="nav" />
+<item href="Styles/book-style.css" id="book-style" media-type="text/css" />
+<item href="Styles/style-reset.css" id="style-reset" media-type="text/css" />
+<item href="Styles/style-standard.css" id="style-standard" media-type="text/css" />
+<item href="Styles/style-advance.css" id="style-advance" media-type="text/css" />
+<item href="Styles/style-check.css" id="style-check" media-type="text/css" />
+$cover_image
+<item href="Text/cover.xhtml" id="cover.xhtml" media-type="application/xhtml+xml" />
+<item href="Text/title.xhtml" id="title.xhtml" media-type="application/xhtml+xml" />
+<item href="Text/toc.xhtml" id="toc.xhtml" media-type="application/xhtml+xml" />
+$content_manifest<item href="Text/about-author.xhtml" id="about-author.xhtml" media-type="application/xhtml+xml" />
+<item href="Text/colophon.xhtml" id="colophon.xhtml" media-type="application/xhtml+xml" />
+<item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml" />
+</manifest>
+
+<spine page-progression-direction="ltr" toc="ncx">
+<itemref idref="cover.xhtml" linear="yes" properties="rendition:page-spread-center" />
+<itemref idref="title.xhtml" linear="yes" properties="page-spread-right" />
+<itemref idref="toc.xhtml" linear="yes" properties="page-spread-right" />
+$content_spine<itemref idref="about-author.xhtml" linear="yes" properties="page-spread-right" />
+<itemref idref="colophon.xhtml" linear="yes" />
+</spine>
+</package>

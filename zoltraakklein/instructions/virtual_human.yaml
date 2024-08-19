@@ -1,0 +1,5 @@
+1:
+  image: image_dalle(rd,square)
+  voice: voice_voicevox(rd)
+2:
+  3d_model: 3d_meshy(rd)

@@ -1,0 +1,12 @@
+1:
+  cover_image: image_dalle(rd,landscape)
+  src: writer(rd,presentation_marp)
+2:
+  page_script: marp_script(src)
+  presentation: marp_presentation(rd,presentation_marp,src,cover_image,dummy)
+3:
+  page_speech: voice_voicevox(page_script)
+4:
+  video_presentation: video_from_presentation(rd,presentation,page_speech)
+5:
+  video_pikapikapika: video_pikapikapika(rd,Natural)

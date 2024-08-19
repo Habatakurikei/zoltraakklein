@@ -1,0 +1,10 @@
+1:
+  cover_image: image_dalle(rd,square)
+  src: writer(rd,technical_book)
+2:
+  presentation: marp_presentation(rd,technical_book,src,cover_image,dummy)
+  epub: epub(rd,technical_book,src,cover_image,dummy)
+3:
+  page_speech: voice_voicevox(src)
+4:
+  video_pikapikapika: video_pikapikapika(rd,Natural)
