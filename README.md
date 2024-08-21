@@ -1,5 +1,9 @@
 ![Zoltraak Klein Logo](https://repository-images.githubusercontent.com/828559799/cf060405-3975-49a2-987b-6d22ee7528cc)
 
+[![Downloads](https://static.pepy.tech/badge/zoltraakklein)](https://pepy.tech/project/zoltraakklein)
+[![Downloads](https://static.pepy.tech/badge/zoltraakklein/month)](https://pepy.tech/project/zoltraakklein)
+[![Downloads](https://static.pepy.tech/badge/zoltraakklein/week)](https://pepy.tech/project/zoltraakklein)
+
 # Zoltraak Klein
 
 Zoltraak is a production framework for digital contents like program codes, images, speeches, presentations, books and videos, by working with Large Language Models (LLMs) and generative AIs.
@@ -222,8 +226,10 @@ if zk.project_menu.exists():
     print(zk.project_menu.read_text(encoding="utf-8"))
     print(f'Total {menu.sum_of_items()} files generated.')
 
-print(f'Elapsed time for each step (sec) = {zk.takt_time}')
-print(f'Total elapsed time (sec) = {sum(zk.takt_time)}')
+print(f'Elapsed time for each step (sec):')
+for step, elapsed_time in zk.takt_time.items():
+    print(f"    {step}: {elapsed_time}")
+print(f'Total elapsed time (sec) = {sum(zk.takt_time.values())}')
 ```
 
 Each domain expansion takes time, better to set a timer for status check as shown in Step 3. Especially for picture books, it may take around 10 minutes until full contents generation.

@@ -80,3 +80,8 @@ KEYWORD_EXPANSION_STARTED = "領域展開開始"
 
 # 領域展開が終わったかどうか確認する間隔（秒）
 WAIT_FOR_POLLING_PROCESS = 1
+
+# 2024-08-21 追加タクトタイムのラベル
+TAKT_TIME_NAME = 'naming'
+TAKT_TIME_RD_GENERATION = 'rd_generation'
+TAKT_TIME_DOMAIN_EXPANSION = 'domain_expansion'

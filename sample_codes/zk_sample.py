@@ -69,10 +69,11 @@ else:
     print('メニューが生成されませんでした。')
     print('Menu has not been generated.')
 
-
 print('----------------------------------')
-print(f'各ステップの実行時間: {zk.takt_time}')
-print(f'Elapsed time for each step (sec) = {zk.takt_time}')
+print(f'各ステップの実行時間（秒）：')
+print(f'Elapsed time for each step (sec):')
+for step, elapsed_time in zk.takt_time.items():
+    print(f"    {step}: {elapsed_time}")
 print('----------------------------------')
-print(f'合計実行時間 (sec) = {sum(zk.takt_time)}')
-print(f'Total elapsed time (sec) = {sum(zk.takt_time)}')
+print(f'合計実行時間 (sec) = {sum(zk.takt_time.values())}')
+print(f'Total elapsed time (sec) = {sum(zk.takt_time.values())}')

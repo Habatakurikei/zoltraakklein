@@ -12,6 +12,9 @@ from zoltraakklein.config import PATH_TO_COMPILER
 from zoltraakklein.config import PATH_TO_INSTRUCTION
 from zoltraakklein.config import PATH_TO_OUTPUT
 from zoltraakklein.config import SEC_RD
+from zoltraakklein.config import TAKT_TIME_DOMAIN_EXPANSION
+from zoltraakklein.config import TAKT_TIME_NAME
+from zoltraakklein.config import TAKT_TIME_RD_GENERATION
 from zoltraakklein.config import USER_DIR
 from zoltraakklein.config import WAIT_FOR_POLLING_PROCESS
 from zoltraakklein.utils import check_folders_exist
@@ -104,7 +107,7 @@ class ZoltraakKlein:
         self.project_menu = None
         self.current_power = 1
         self.expansion_in_progress = False
-        self.takt_time = []
+        self.takt_time = {}
 
         check_folders_exist()
 
@@ -180,7 +183,8 @@ class ZoltraakKlein:
                 self.project_menu = create_menu_path(self.project_name)
 
                 time_end = time.time()
-                self.takt_time.append(round(time_end - time_start, 3))
+                takt_time = round(time_end - time_start, 3)
+                self.takt_time[TAKT_TIME_NAME] = takt_time
 
                 if self.verbose:
                     msg = 'メニュー（生成物リスト）ファイル名を生成しました： '
@@ -242,7 +246,8 @@ class ZoltraakKlein:
             menu.save()
 
             time_end = time.time()
-            self.takt_time.append(round(time_end - time_start, 3))
+            takt_time = round(time_end - time_start, 3)
+            self.takt_time[TAKT_TIME_RD_GENERATION] = takt_time
 
             if self.verbose:
                 for key, value in self.master.results.items():
@@ -284,9 +289,10 @@ class ZoltraakKlein:
                             str(self.project_path), key, value)
                         msg += '処理を開始します。\n'
 
-                process_monitor = Thread(target=self._monitor_process,
-                                         args=(process_list,),
-                                         daemon=True)
+                process_monitor = Thread(
+                    target=self._monitor_process,
+                    args=(process_list, self.current_power, ),
+                    daemon=True)
                 process_monitor.start()
 
                 msg = f'{KEYWORD_EXPANSION_STARTED}:'
@@ -357,7 +363,7 @@ class ZoltraakKlein:
 
         return entries
 
-    def load_project(self, project_name: str, current_power: int):
+    def load_project(self, project_name: str, current_power: int = 1):
         '''
         生成中のプロジェクトフォルダを読み込みます。
         既に要件定義書ができているプロジェクトに対して
@@ -378,13 +384,7 @@ class ZoltraakKlein:
             msg = f'メニュー（生成物リスト）が存在しません: {self.project_menu}'
             raise ValueError(msg)
 
-        if 0 < current_power and current_power <= self.limit:
-            self.current_power = int(current_power)
-        else:
-            msg = f'火力指定が正しくありません: {current_power}\n'
-            msg += f'プロジェクトフォルダ: {self.project_path}\n'
-            msg += f'最大火力: {self.limit}'
-            raise ValueError(msg)
+        self.current_power = int(current_power)
 
     def is_expansion_capable(self):
         '''
@@ -395,7 +395,7 @@ class ZoltraakKlein:
         '''
         return True if self.current_power <= self.limit else False
 
-    def _monitor_process(self, process_list: dict):
+    def _monitor_process(self, process_list: dict, step: int):
         '''
         領域展開中かどうかプロセスを監視します。
         独立したスレッドで動かすため、
@@ -424,6 +424,8 @@ class ZoltraakKlein:
                 time.sleep(WAIT_FOR_POLLING_PROCESS)
 
             time_end = time.time()
-            self.takt_time.append(round(time_end - time_start, 3))
+            takt_time = round(time_end - time_start, 3)
+            label = TAKT_TIME_DOMAIN_EXPANSION + f'_{step:02d}'
+            self.takt_time[label] = takt_time
 
         self.expansion_in_progress = False

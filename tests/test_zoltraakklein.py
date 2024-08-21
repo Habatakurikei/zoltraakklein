@@ -1,7 +1,6 @@
 import os
 import sys
 import time
-from pathlib import Path
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '../zoltraakklein'))
@@ -63,8 +62,10 @@ def test_default_setting(run_api):
         print('Menu (list of generated items) is ready.')
         print(zk.project_menu.read_text(encoding="utf-8"))
         print(f'Total {menu.sum_of_items()} files generated.')
-        print(f'Elapsed time for each step (sec) = {zk.takt_time}')
-        print(f'Total elapsed time (sec) = {sum(zk.takt_time)}')
+        print("Elapsed time for each step (sec):")
+        for step, elapsed_time in zk.takt_time.items():
+            print(f"    {step}: {elapsed_time}")
+        print(f'Total elapsed time (sec) = {sum(zk.takt_time.values())}')
 
     assert judgment
 
@@ -137,7 +138,9 @@ def test_multiple_llm(run_api):
         print('Menu (list of generated items) is ready.')
         print(zk.project_menu.read_text(encoding="utf-8"))
         print(f'Total {menu.sum_of_items()} files generated.')
-        print(f'Elapsed time for each step (sec) = {zk.takt_time}')
-        print(f'Total elapsed time (sec) = {sum(zk.takt_time)}')
+        print(f'Elapsed time for each step (sec):')
+        for step, elapsed_time in zk.takt_time.items():
+            print(f"    {step}: {elapsed_time}")
+        print(f'Total elapsed time (sec) = {sum(zk.takt_time.values())}')
 
     assert judgment

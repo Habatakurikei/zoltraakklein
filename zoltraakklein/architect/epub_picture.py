@@ -83,7 +83,7 @@ class ArchitectEPUBPictureBook(ArchitectBase):
 
         self._pack_epub(save_as)
 
-        new_menu_items = {"epub": str(save_as / EXT_EPUB)}
+        new_menu_items = {"epub": str(save_as) + EXT_EPUB}
         self._add_menu_items(new_menu_items)
 
         self._remove_epub_templates()
