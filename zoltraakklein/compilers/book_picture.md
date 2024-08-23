@@ -28,6 +28,6 @@ headline: 見出し
 
 ## 画像生成向けプロンプト
 - Translate the abstract in English here in a single line.
+- Do not include any violent keywords.
 - Add 'Japanese cartoon style;' and 'suitable for a 3-year-old;' at the end.
 - Do not line-feed.
-

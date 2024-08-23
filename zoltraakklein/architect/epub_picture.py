@@ -118,17 +118,16 @@ class ArchitectEPUBPictureBook(ArchitectBase):
           4. カバー画像のファイル名を返す、表紙のリンク情報として必要
         ただしカバー画像が存在しない場合はシステムで用意した画像のパスを返す
         '''
-        cover_name = ''
         source_rd = CONTENT_ATTRIBUTES[CONTENT_TYPE_PICTURE_BOOK][SOURCE_RD]
         cover_origin = next((Path(value) for key, value in
                              self.cover_image.items() if source_rd in key),
                             Path(next(iter(self.cover_image.values()))))
         if not cover_origin.is_file():
             cover_origin = SYSTEM_DIR / PATH_TO_TEMPLATE / DEFAULT_IMAGE
-        cover_name = cover_origin.name
-        shutil.copy(cover_origin,
-                    self.work_dir / EPUB_IMAGE_PATH / cover_name)
-        return cover_name
+        destination = self.work_dir / EPUB_IMAGE_PATH / cover_origin.name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(cover_origin, destination)
+        return cover_origin.name
 
     def _load_page_content(self):
         '''
@@ -152,15 +151,15 @@ class ArchitectEPUBPictureBook(ArchitectBase):
         for value in self.page_image.values():
             if not Path(value).is_file():
                 image_name = default_image.name
-                shutil.copy(default_image, self.work_dir /
-                            EPUB_IMAGE_PATH /
-                            image_name)
+                shutil.copy2(default_image, self.work_dir /
+                             EPUB_IMAGE_PATH /
+                             image_name)
                 page_images.append(image_name)
             else:
                 image_name = Path(value).name
-                shutil.copy(value, self.work_dir /
-                            EPUB_IMAGE_PATH /
-                            image_name)
+                shutil.copy2(value, self.work_dir /
+                             EPUB_IMAGE_PATH /
+                             image_name)
                 page_images.append(image_name)
         return page_images
 
