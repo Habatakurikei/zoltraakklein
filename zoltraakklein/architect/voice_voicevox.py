@@ -1,5 +1,6 @@
 import re
 import sys
+import wave
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -26,63 +27,51 @@ class ArchitectVoicevox(ArchitectBase):
     '''
     def __init__(self):
         super().__init__()
+        self.master = LLMMaster(summon_limit=GEN_VOICEVOX_MAX_LINES,
+                                wait_for_starting=GEN_VOICEVOX_INTERVAL)
 
     def work(self):
         '''
-        手順：
-          1. 要件定義書は複数あるかもしれないので下記手順2-4を繰り返す
-          2. 要件定義書からスピーカーIDを取得
-          3. 要件定義書から音声生成テキストを抽出
-          4. LLMMasterにて音声生成
-          5. 音声ファイルを保存
-          6. メニューに音声ファイルの保存先を記録
-          7. メニューを保存
-        補足：音声生成AIはVOICEVOXを使用
+        キャラクター要件定義書からセリフ音声を合成する場合と
+        読み上げ原稿から音声を合成する場合で処理を分ける
         '''
         super().work()
 
-        master = LLMMaster(summon_limit=GEN_VOICEVOX_MAX_LINES,
-                           wait_for_starting=GEN_VOICEVOX_INTERVAL)
+        if SEC_RD in self.source_section:
+            self._voice_from_rd()
+        else:
+            self._voice_from_document()
 
-        lines = {}
+    def _set_llmmaster_parameters(self, prompt: str):
+        '''
+        LLMMasterに渡すパラメータを整えて返す
+        単純処理だがこのクラスで繰り返し呼ばれるので
+        ひとまとめにしてコードを見やすくした
+        '''
+        return self.master.pack_parameters(
+            provider=GEN_VOICEVOX_VOICE_PROVIDER,
+            prompt=prompt,
+            speaker=GEN_VOICEVOX_DEFAULT_SPEAKER)
+
+    def _voice_from_rd(self):
+        '''
+        キャラクター要件定義書のセリフ音声を合成
+        各セリフは短いので並列処理で一気に作る
+        '''
         for key, value in self.source.items():
-            if SEC_RD in self.source_section:
-                line_list = self._find_voice_text(value, RD_VOICE_KEYWORD)
-                for i, line in enumerate(line_list, 1):
-                    tag = VOICEVOX_PREFIX + f'{key}_{i:02d}'
-                    lines[tag] = line
-            else:
-                text = Path(value).read_text(encoding='utf-8')
-                if len(text.replace('\n', '')) < VOICEVOX_CHARACTER_LIMIT:
-                    lines[VOICEVOX_PREFIX + key] = text.replace('\n', '')
-                else:
-                    lines.update(self._split_text(VOICEVOX_PREFIX + key, text))
+            line_list = self._find_voice_text(value, RD_VOICE_KEYWORD)
+            for i, line in enumerate(line_list, 1):
+                tag = VOICEVOX_PREFIX + f'{key}_{i:02d}'
+                self.master.summon({tag: self._set_llmmaster_parameters(line)})
 
-        for key, value in lines.items():
-            params = master.pack_parameters(
-                provider=GEN_VOICEVOX_VOICE_PROVIDER,
-                prompt=value,
-                speaker=GEN_VOICEVOX_DEFAULT_SPEAKER)
-            master.summon({key: params})
+        self.master.run()
 
-        master.run()
         new_menu_items = {}
-
-        for key, value in master.results.items():
-            to_write = ''
-
-            if isinstance(value, Response):
-                to_write = self._save_bytes(value.content, f'{key}{EXT_WAV}')
-            elif isinstance(value, str):
-                to_write = value
-            else:
-                msg = 'Content not found in the response from generative AI.'
-                to_write = msg
-
-            new_menu_items[key] = to_write
-
+        for key, response in self.master.results.items():
+            new_menu_items[key] = self._save_voice(response, f'{key}{EXT_WAV}')
         self._add_menu_items(new_menu_items)
-        master.dismiss()
+
+        self.master.dismiss()
 
     def _find_voice_text(self, source: str, keyword: str):
         '''
@@ -112,7 +101,48 @@ class ArchitectVoicevox(ArchitectBase):
 
         return ans
 
-    def _split_text(self, key: str, text: str):
+    def _voice_from_document(self):
+        '''
+        読み上げ原稿から音声を合成する
+        原稿が短い場合は1原稿=1音声で合成
+        原稿が長い場合は分割してそれぞれの音声を合成した後組み合わせる
+        '''
+        new_menu_items = {}
+
+        for key, value in self.source.items():
+
+            tag = VOICEVOX_PREFIX + key
+            text = Path(value).read_text(encoding='utf-8')
+
+            if len(text.replace('\n', '')) < VOICEVOX_CHARACTER_LIMIT:
+                params = self._set_llmmaster_parameters(text.replace('\n', ''))
+                self.master.summon({tag: params})
+                self.master.run()
+                new_menu_items[tag] = self._save_voice(self.master.results[tag],
+                                                       f'{tag}{EXT_WAV}')
+
+            else:
+                lines = self._split_text(tag, text)
+                for line_name, text_to_read in lines.items():
+                    params = self._set_llmmaster_parameters(text_to_read)
+                    self.master.summon({line_name: params})
+
+                self.master.run()
+
+                file_list = []
+                for line_name, response in self.master.results.items():
+                    if isinstance(response, Response):
+                        entry = self._save_bytes(response.content,
+                                                 f'{line_name}{EXT_WAV}')
+                        file_list.append(entry)
+
+                new_menu_items[tag] = self._concat_files(file_list, tag)
+
+            self.master.dismiss()
+
+        self._add_menu_items(new_menu_items)
+
+    def _split_text(self, tag: str, text: str):
         '''
         入力されたテキストを一行ずつ分解して読み上げ音声入力にする
         文字数が多すぎるとVocevoxが高負荷で落ちてしまうための対策
@@ -121,12 +151,41 @@ class ArchitectVoicevox(ArchitectBase):
         i = 1
         for sentence in text.splitlines():
             if sentence:
-                tag = f'{key}_{i:02d}'
-                ans[tag] = sentence
+                ans[f'{tag}_{i:02d}'] = sentence
                 i += 1
-
         return ans
 
+    def _concat_files(self, file_list: list, file_name: str):
+        '''
+        分割された音声ファイルを結合する
+        '''
+        save_as = str(self.output_dir / f'{file_name}{EXT_WAV}')
+        output = wave.open(save_as, 'wb')
+        for i, path in enumerate(file_list):
+            with wave.open(path, 'rb') as wav_file:
+                params = wav_file.getparams()
+                frames = wav_file.readframes(wav_file.getnframes())
+            if i == 0:
+                output.setparams(params)
+            output.writeframes(frames)
+            Path(path).unlink()
+        output.close()
+        return save_as
+
+    def _save_voice(self, response: Response, file_name: str):
+        '''
+        合成した音声を保存し、メニュー記載用にファイル名を返す
+        引数のresponseは音声合成が成功したと仮定してResponseを受け取りたい
+        '''
+        to_write = ''
+        if isinstance(response, Response):
+            to_write = self._save_bytes(response.content, file_name)
+        elif isinstance(response, str):
+            to_write = response
+        else:
+            msg = 'Content not found in the response from generative AI.'
+            to_write = msg
+        return to_write
 
 def main():
     architect = ArchitectVoicevox()

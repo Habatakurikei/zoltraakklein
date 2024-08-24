@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="zoltraakklein",
-    version="1.0.2",
+    version="1.0.3",
     author="Daisuke Yamaguchi",
     author_email="daicom0204@gmail.com",
     description="A simplified class for Zoltraak.",

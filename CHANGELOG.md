@@ -1,5 +1,10 @@
 # Zoltraak Klein Changelog
 
+## [1.0.3] - 2024-08-24
+### Changed
+- Fully revised architect "voice_voicevox" to reduce the load on the system.
+- Corrected spelling error in the "architect_description.json" file.
+
 ## [1.0.2] - 2024-08-23
 ### Changed
 - Corrected bug of file copy error in the "epub" and "epub_picture" architect.

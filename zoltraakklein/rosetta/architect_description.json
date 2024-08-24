@@ -9,7 +9,7 @@
   "marp_script": "プレゼンコード(Marp形式)生成",
   "mermaid_chart": "マーメイド記法からチャート生成",
   "video_from_presentation": "文章と音声を合成してプレゼン動画生成",
-  "video_pikapikapika": "動画生成 (PikaPikaPIka)",
+  "video_pikapikapika": "動画生成 (PikaPikaPika)",
   "virtual_character": "キャラクター要件定義書の追加生成",
   "voice_elevenlabs": "音声合成 (ElevenLabs)",
   "voice_voicevox": "音声合成 (Voicevox)",
