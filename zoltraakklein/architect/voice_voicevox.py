@@ -118,8 +118,8 @@ class ArchitectVoicevox(ArchitectBase):
                 params = self._set_llmmaster_parameters(text.replace('\n', ''))
                 self.master.summon({tag: params})
                 self.master.run()
-                new_menu_items[tag] = self._save_voice(self.master.results[tag],
-                                                       f'{tag}{EXT_WAV}')
+                new_menu_items[tag] = self._save_voice(
+                    self.master.results[tag], f'{tag}{EXT_WAV}')
 
             else:
                 lines = self._split_text(tag, text)
@@ -186,6 +186,7 @@ class ArchitectVoicevox(ArchitectBase):
             msg = 'Content not found in the response from generative AI.'
             to_write = msg
         return to_write
+
 
 def main():
     architect = ArchitectVoicevox()

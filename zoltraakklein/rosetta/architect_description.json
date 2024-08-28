@@ -6,7 +6,7 @@
   "image_dalle": "画像生成 (Dall-E)",
   "image_stable_diffusion": "画像生成 (Stable Diffusion)",
   "marp_presentation": "プレゼン資料生成 (marp, PDF, PPTX, PNG)",
-  "marp_script": "プレゼンコード(Marp形式)生成",
+  "marp_script": "プレゼン読み上げ原稿生成",
   "mermaid_chart": "マーメイド記法からチャート生成",
   "video_from_presentation": "文章と音声を合成してプレゼン動画生成",
   "video_pikapikapika": "動画生成 (PikaPikaPika)",

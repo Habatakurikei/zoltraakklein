@@ -392,6 +392,20 @@ If necessary, call member function `load_project()` after ZK instance initializa
 
 Restarting content generation is possible if the previous expansion is successful but failed at current point. The developer does not recommend using this function because `load_project` was arranged for debug purpose.
 
+### Mermaid chart generation in case of Posix systems
+
+**Important**: added in v1.0.4, 2024-08-28
+
+Mermaid CLI requires external browser to generate chart images. If missing to specify browser path when calling `mmdc` command, an error will occur.
+
+This error is not shown in case of Windows because Mermaid CLI uses Microsoft Edge by default. However, in case of Posix systems (Linux, MacOS), `puppeteer-config.json` might be required to add option in command line.
+
+You will need to find path to browser in your system and add to `"executablePath": "path/to/browser"`, see [puppeteer-config.json](zoltraakklein/templates/puppeteer-config.json).
+
+You will also need to modify architect `mermaid_chart.py` to call `mmdc` command with `--puppeteerConfigFile` option. See [mermaid_chart.py](zoltraakklein/architect/mermaid_chart.py) for detail.
+
+Sorry for the inconvenience.
+
 ## License
 
 Following the original Zoltraak project, this project is also licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

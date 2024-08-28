@@ -1,7 +1,7 @@
 # Project specific folders
-demo.py
-zlvenv/
 projects/
+zlvenv/
+demo.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

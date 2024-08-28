@@ -1,5 +1,9 @@
+import os
 import re
 import sys
+import time
+from subprocess import DEVNULL
+from subprocess import Popen
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -9,6 +13,7 @@ from config import MARP_HEADER_TEMPLATE_BUSINESS_BOOK
 from config import MARP_HEADER_TEMPLATE_PICTURE_BOOK
 from config import MARP_HEADER_TEMPLATE_PRESENTATION
 from config import MARP_HEADER_TEMPLATE_TECHNICAL_BOOK
+from config import OS_WINDOWS
 from config import PROMPT_FOR_BUSINESS_BOOK
 from config import PROMPT_FOR_CODE
 from config import PROMPT_FOR_IMAGE_PROMPT
@@ -19,6 +24,7 @@ from config import PROMPT_FOR_SCRIPT
 from config import PROMPT_FOR_TECHNICAL_BOOK
 from config import PROMPT_FOR_VIRTUAL_CHARACTER
 from config import PROMPT_FOR_WEB_ARTICLE
+from config import WAIT_FOR_POLLING_PROCESS
 from yaml_manager import YAMLManager
 
 
@@ -449,3 +455,19 @@ class ArchitectBase:
         save_as = self.output_dir / file_name
         save_as.write_bytes(data)
         return str(save_as)
+
+    def _call_external_command(self, command: list[str]):
+        '''
+        外部コマンドを呼び出してコンテンツ生成する
+        Mermaid-CLI, Marp-CLI など
+        '''
+        if OS_WINDOWS in os.name:
+            pid = Popen(command, shell=True, stdout=DEVNULL, stderr=DEVNULL)
+        else:
+            pid = Popen(command,
+                        shell=False,
+                        start_new_session=True,
+                        stdout=DEVNULL,
+                        stderr=DEVNULL)
+        while pid.poll() is None:
+            time.sleep(WAIT_FOR_POLLING_PROCESS)

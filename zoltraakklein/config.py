@@ -5,6 +5,11 @@ from pathlib import Path
 # システムのPythonコマンド
 PYTHON_COMMAND = sys.executable
 
+# OSタイプ
+OS_WINDOWS = "nt"
+OS_LINUX = "posix"
+OS_MACOS = "posix"
+
 # デフォルト言語モデルとパラメータ
 DEFAULT_PROVIDER = "openai"
 DEFAULT_MODEL = "gpt-4o"
@@ -78,7 +83,7 @@ SEC_MESHY_3D_REFINE = "refine"
 # 領域展開開始時のキーワード
 KEYWORD_EXPANSION_STARTED = "領域展開開始"
 
-# 領域展開が終わったかどうか確認する間隔（秒）
+# 領域展開・外部処理コマンドが終わったかどうか確認する間隔（秒）
 WAIT_FOR_POLLING_PROCESS = 1
 
 # 2024-08-21 追加タクトタイムのラベル

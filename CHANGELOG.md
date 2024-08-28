@@ -1,5 +1,11 @@
 # Zoltraak Klein Changelog
 
+## [1.0.4] - 2024-08-28
+### Changed
+- Corrected architects "architect_common.py", "mermaid_chart.py" and "marp_presentation.py" to call external command suitable for the OS.
+- Corrected "mermaid_chart.py" to adapt to Posix systems case by adding "puppeteer-config.json".
+- Amended files in rosetta folder.
+
 ## [1.0.3] - 2024-08-24
 ### Changed
 - Fully revised architect "voice_voicevox" to reduce the load on the system.

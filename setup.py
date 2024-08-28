@@ -5,10 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="zoltraakklein",
-    version="1.0.3",
+    version="1.0.4",
     author="Daisuke Yamaguchi",
     author_email="daicom0204@gmail.com",
-    description="A simplified class for Zoltraak.",
+    description="Simplified class for Zoltraak, a digital content production framework by working with LLMs and generative AIs.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://pypi.org/project/zoltraakklein/",

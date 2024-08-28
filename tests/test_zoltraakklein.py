@@ -8,7 +8,6 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../zoltraakklein'))
 import pytest
 
 from zoltraakklein import ZoltraakKlein
-from zoltraakklein.config import SEC_RD
 from zoltraakklein.yaml_manager import YAMLManager
 
 
@@ -19,6 +18,20 @@ COMPILER = 'general_proposal'
 @pytest.fixture
 def run_api(request):
     return request.config.getoption("--run-api")
+
+
+def show_results(zk: ZoltraakKlein):
+    print(f'project_name = {zk.project_name}')
+    print(f'project_path = {zk.project_path}')
+    print(f'menu = {zk.project_menu}')
+    menu = YAMLManager(str(zk.project_menu))
+    print('Menu (list of generated items) is ready.')
+    print(zk.project_menu.read_text(encoding="utf-8"))
+    print(f'Total {menu.sum_of_items()} files generated.')
+    print(f'Elapsed time for each step (sec):')
+    for step, elapsed_time in zk.takt_time.items():
+        print(f"    {step}: {elapsed_time}")
+    print(f'Total elapsed time (sec) = {sum(zk.takt_time.values())}')
 
 
 def test_no_prompt():
@@ -52,20 +65,11 @@ def test_default_setting(run_api):
         print('Cast Zoltraak!')
 
         zk.cast_zoltraak()
+
         if not zk.project_menu.exists():
             pytest.fail('メニューが生成されていません')
 
-        print(f'project_name = {zk.project_name}')
-        print(f'project_path = {zk.project_path}')
-        print(f'menu = {zk.project_menu}')
-        menu = YAMLManager(str(zk.project_menu))
-        print('Menu (list of generated items) is ready.')
-        print(zk.project_menu.read_text(encoding="utf-8"))
-        print(f'Total {menu.sum_of_items()} files generated.')
-        print("Elapsed time for each step (sec):")
-        for step, elapsed_time in zk.takt_time.items():
-            print(f"    {step}: {elapsed_time}")
-        print(f'Total elapsed time (sec) = {sum(zk.takt_time.values())}')
+        show_results(zk)
 
     assert judgment
 
@@ -131,16 +135,6 @@ def test_multiple_llm(run_api):
         if not zk.project_menu.exists():
             pytest.fail('メニューが生成されていません')
 
-        print(f'project_name = {zk.project_name}')
-        print(f'project_path = {zk.project_path}')
-        print(f'menu = {zk.project_menu}')
-        menu = YAMLManager(str(zk.project_menu))
-        print('Menu (list of generated items) is ready.')
-        print(zk.project_menu.read_text(encoding="utf-8"))
-        print(f'Total {menu.sum_of_items()} files generated.')
-        print(f'Elapsed time for each step (sec):')
-        for step, elapsed_time in zk.takt_time.items():
-            print(f"    {step}: {elapsed_time}")
-        print(f'Total elapsed time (sec) = {sum(zk.takt_time.values())}')
+        show_results(zk)
 
     assert judgment

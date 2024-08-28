@@ -1,9 +1,7 @@
 import shutil
-import subprocess
 import sys
 from pathlib import Path
 from string import Template
-from subprocess import DEVNULL
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -263,9 +261,7 @@ class ArchitectPresentationMarp(ArchitectBase):
             raise ValueError(f"Invalid output file extension: {output_path}")
 
         command = ["marp", md_file, "--allow-local-files"] + options
-        subprocess.run(command, shell=True, stdout=DEVNULL, stderr=DEVNULL)
-
-        # marp --images png slide-deck.md
+        self._call_external_command(command)
 
     def _remove_images(self, cover_image: str, page_images: list):
         '''

@@ -1,7 +1,5 @@
-import subprocess
 import sys
 from pathlib import Path
-from subprocess import DEVNULL
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -51,7 +49,14 @@ class ArchitectMermaidGraphGenerator(ArchitectBase):
     def _save_diagram(self, mermaid_text: str, save_as: Path):
         '''
         一部のマーメイド記法グラフにて中黒点がエラーになる
-        仮の対処法として置換、問題なければ削除予定
+        仮の対処法として置換処理を入れているが問題なければ削除予定
+        2024-08-28
+        Linux (Ubuntu) ではチャートの描画を行うブラウザアプリを
+        JSON形式で指定しないとエラーになることがわかった
+        必要時はJSONファイルのコマンドラインオプション処理を追加すること
+        テンプレートフォルダにある `puppeteer-config.json` を開き
+        ブラウザの起動パスを `executablePath` に指定して上書きすること
+        このテンプレートではChromeのパスを指定している
         '''
         to_write = mermaid_text.replace('・', 'と')
 
@@ -59,7 +64,8 @@ class ArchitectMermaidGraphGenerator(ArchitectBase):
         temporary_file.write_text(to_write, encoding='utf-8')
 
         command = ['mmdc', '-i', str(temporary_file), '-o', str(save_as)]
-        subprocess.run(command, shell=True, stdout=DEVNULL, stderr=DEVNULL)
+        # command += ['--puppeteerConfigFile', 'path  puppeteer-config.json']
+        self._call_external_command(command)
 
         temporary_file.unlink()
 
