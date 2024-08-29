@@ -16,7 +16,6 @@ DEFAULT_MODEL = "gpt-4o"
 
 # 各種パス設定
 SYSTEM_DIR = Path(__file__).parent.resolve()
-USER_DIR = Path.cwd()
 
 PATH_TO_ARCHITECT = "architect"
 PATH_TO_COMPILER = "compilers"

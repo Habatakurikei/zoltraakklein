@@ -1,4 +1,5 @@
 import time
+from pathlib import Path
 from threading import Thread
 
 from llmmaster import LLMMaster
@@ -10,15 +11,13 @@ from zoltraakklein.config import EXT_YAML
 from zoltraakklein.config import KEYWORD_EXPANSION_STARTED
 from zoltraakklein.config import PATH_TO_COMPILER
 from zoltraakklein.config import PATH_TO_INSTRUCTION
-from zoltraakklein.config import PATH_TO_OUTPUT
 from zoltraakklein.config import SEC_RD
 from zoltraakklein.config import TAKT_TIME_DOMAIN_EXPANSION
 from zoltraakklein.config import TAKT_TIME_NAME
 from zoltraakklein.config import TAKT_TIME_RD_GENERATION
-from zoltraakklein.config import USER_DIR
 from zoltraakklein.config import WAIT_FOR_POLLING_PROCESS
-from zoltraakklein.utils import check_folders_exist
-from zoltraakklein.utils import create_menu_path
+from zoltraakklein.utils import check_output_folder
+from zoltraakklein.utils import create_menu
 from zoltraakklein.utils import fetch_instruction_content
 from zoltraakklein.utils import generate_naming_prompt
 from zoltraakklein.utils import generate_requirement_prompt
@@ -38,6 +37,7 @@ class ZoltraakKlein:
                  request='',
                  compiler='',
                  verbose=False,
+                 work_dir=Path.cwd(),
                  **kwargs):
         '''
         初期化のための引数：
@@ -45,6 +45,7 @@ class ZoltraakKlein:
             compiler (str): コンパイラ識別子 (e.g. outfit_idea)
               拡張子不要、なぜならコンパイラ(.md)と指示書(.yaml)の指定で共有するため
             verbose (bool): 途中の処理経過を `print` 表示するかどうか
+            work_dir (Path/str): 作業ディレクトリのパス、この下に `projects` フォルダを作る
             kwargs (dict): 使用する AI (LLM) 情報
         【上級者向け情報】
         LLMMasterの仕様に従って `kwargs` には複数のAIモデル情報を渡し並列処理することができます。
@@ -78,9 +79,13 @@ class ZoltraakKlein:
         elif not seek_document(compiler, PATH_TO_COMPILER):
             raise ValueError(f'コンパイラが見つかりません： {compiler}')
 
+        if not isinstance(work_dir, Path):
+            work_dir = Path(work_dir)
+
         self.request = request
-        self.verbose = verbose
         self.compiler = compiler.split('.')[0]
+        self.verbose = verbose
+        self.work_dir = check_output_folder(work_dir)
 
         '''
         初期化以外のメンバー変数
@@ -100,6 +105,7 @@ class ZoltraakKlein:
         else:
             self.llm = {DEFAULT_PROVIDER: {'provider': DEFAULT_PROVIDER,
                                            'model': DEFAULT_MODEL}}
+
         self.limit = set_expansion_limit(self.compiler)
         self.master = LLMMaster()
         self.project_name = ''
@@ -108,8 +114,6 @@ class ZoltraakKlein:
         self.current_power = 1
         self.expansion_in_progress = False
         self.takt_time = {}
-
-        check_folders_exist()
 
     def cast_zoltraak(self):
         '''
@@ -150,7 +154,7 @@ class ZoltraakKlein:
         time_start = time.time()
 
         try:
-            prompt = generate_naming_prompt(self.request)
+            prompt = generate_naming_prompt(self.request, self.work_dir)
 
             if self.verbose:
                 msg = 'プロジェクト名の新規命名プロンプト：\n'
@@ -164,7 +168,7 @@ class ZoltraakKlein:
             self.master.run()
 
             self.project_name = next(iter(self.master.results.values()))
-            self.project_path = USER_DIR / PATH_TO_OUTPUT / self.project_name
+            self.project_path = self.work_dir / self.project_name
 
             if self.project_path.is_dir():
                 msg = f'プロジェクトフォルダは既に存在しています： {self.project_path}\n'
@@ -179,8 +183,8 @@ class ZoltraakKlein:
                     print(msg)
 
                 self.project_path.mkdir(parents=True, exist_ok=True)
-
-                self.project_menu = create_menu_path(self.project_name)
+                self.project_menu = create_menu(self.project_path,
+                                                self.project_name)
 
                 time_end = time.time()
                 takt_time = round(time_end - time_start, 3)
@@ -224,7 +228,7 @@ class ZoltraakKlein:
 
         try:
             prompt = generate_requirement_prompt(
-                seek_document(self.compiler, PATH_TO_COMPILER), self.request)
+                self.request, seek_document(self.compiler, PATH_TO_COMPILER))
 
             if self.verbose:
                 msg = '要件定義書生成プロンプト：\n'
@@ -373,7 +377,7 @@ class ZoltraakKlein:
         project_name (str): プロジェクト名、パス不要
         current_power (int): 再開したい領域展開番号を指定
         '''
-        self.project_path = USER_DIR / PATH_TO_OUTPUT / project_name
+        self.project_path = self.work_dir / project_name
         if not self.project_path.is_dir():
             msg = f'プロジェクトフォルダが存在しません: {self.project_path}'
             raise ValueError(msg)

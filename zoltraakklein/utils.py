@@ -16,21 +16,20 @@ from zoltraakklein.config import PATH_TO_TEMPLATE
 from zoltraakklein.config import PROMPT_FOR_NAME
 from zoltraakklein.config import PYTHON_COMMAND
 from zoltraakklein.config import SYSTEM_DIR
-from zoltraakklein.config import USER_DIR
 from zoltraakklein.yaml_manager import YAMLManager
 
 
-def check_folders_exist():
+def check_output_folder(work_dir: Path):
     '''
     生成物保存先フォルダが存在するかを確認します。
     存在しない場合はフォルダを作成しておきます。
-    初期化時のみ呼ばれます。
     '''
-    output_path = USER_DIR / PATH_TO_OUTPUT
+    output_path = work_dir / PATH_TO_OUTPUT
     output_path.mkdir(parents=True, exist_ok=True)
+    return output_path
 
 
-def generate_naming_prompt(request: str):
+def generate_naming_prompt(request: str, work_dir: Path):
     '''
     プロジェクト名生成プロンプトを用意します。
     （旧ファイル名生成プロンプト）
@@ -42,9 +41,7 @@ def generate_naming_prompt(request: str):
     '''
     prompt = ''
 
-    existing_projects = [p.name for p
-                         in (USER_DIR / PATH_TO_OUTPUT).iterdir()
-                         if p.is_dir()]
+    existing_projects = [p.name for p in work_dir.iterdir() if p.is_dir()]
     existing_projects = ', '.join(existing_projects)
 
     prompt_path = SYSTEM_DIR / PATH_TO_PROMPT / PROMPT_FOR_NAME
@@ -54,7 +51,7 @@ def generate_naming_prompt(request: str):
     return prompt
 
 
-def generate_requirement_prompt(compiler: str, request: str):
+def generate_requirement_prompt(request: str, compiler: str):
     '''
     要件定義書生成プロンプトを用意します。
     手順：
@@ -70,14 +67,13 @@ def generate_requirement_prompt(compiler: str, request: str):
     return prompt.format(prompt=request)
 
 
-def create_menu_path(project_name: str):
+def create_menu(project_path: Path, project_name: str):
     '''
     新規プロジェクトに対して空のメニュー（生成物リスト）を作成します。
     出力先フォルダ＋ファイル名を含む Path クラスを返します。
     '''
     menu_template = SYSTEM_DIR / PATH_TO_TEMPLATE / MENU_TEMPLATE
-    new_menu = USER_DIR / PATH_TO_OUTPUT / project_name / \
-        f"{project_name}{MENU_FORMAT}"
+    new_menu = project_path / f"{project_name}{MENU_FORMAT}"
     shutil.copy2(menu_template, new_menu)
     return new_menu
 
@@ -141,10 +137,7 @@ def order_to_architect(project_path: str, output: str, function: str):
     入力はメニューに書かれている要件定義書(rd)、生成物保存先は `rd_mermaid` フォルダ。
     '''
     buff = function.split('(')
-
     architect = SYSTEM_DIR / PATH_TO_ARCHITECT / f"{buff[0]}{EXT_PYTHON}"
     args = buff[1].replace(')', '').replace(' ', '').split(',')
-
     to_call = [PYTHON_COMMAND, str(architect), project_path, output] + args
-
     return Popen(to_call)

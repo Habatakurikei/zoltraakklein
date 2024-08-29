@@ -466,7 +466,7 @@ class ArchitectBase:
         else:
             pid = Popen(command,
                         shell=False,
-                        start_new_session=True,
+                        start_new_session=False,
                         stdout=DEVNULL,
                         stderr=DEVNULL)
         while pid.poll() is None:

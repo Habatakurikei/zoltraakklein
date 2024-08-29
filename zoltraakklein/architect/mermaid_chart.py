@@ -60,7 +60,7 @@ class ArchitectMermaidGraphGenerator(ArchitectBase):
         '''
         to_write = mermaid_text.replace('・', 'と')
 
-        temporary_file = Path('temp.mmd')
+        temporary_file = self.output_dir / 'temp.mmd'
         temporary_file.write_text(to_write, encoding='utf-8')
 
         command = ['mmdc', '-i', str(temporary_file), '-o', str(save_as)]
