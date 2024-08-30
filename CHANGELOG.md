@@ -1,5 +1,9 @@
 # Zoltraak Klein Changelog
 
+## [1.0.6] - 2024-08-30
+### Changed
+- Corrected architect "video_from_presentation.py" to avoid error of access permission for moviepy work file.
+
 ## [1.0.5] - 2024-08-29
 ### Changed
 - Removed USER_DIR as the work directory path from "config.py", then added `work_dir` as a ZK member variable.

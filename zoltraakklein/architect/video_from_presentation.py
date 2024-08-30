@@ -1,3 +1,4 @@
+import os
 import sys
 from pathlib import Path
 
@@ -97,16 +98,24 @@ class ArchitectPresentationVideoMaker(ArchitectBase):
                             output_file: Path):
         '''
         仮動画と音声を合成して最終動画を生成
+        2024-08-29
+        最終動画生成中に別の作業動画が生成されるが
+        パーミッションエラーを回避するために、
+        ディレクトリを変更してから動画生成を行う
         '''
         speech_files = [AudioClip(lambda t: 0, duration=COVER_DISPLAY_TIME)]
         speech_files += [AudioFileClip(value) for value in audio_list]
         final_audio = concatenate_audioclips(speech_files)
+
+        dir_org = os.getcwd()
+        os.chdir(str(self.output_dir))
         video = VideoFileClip(str(work_file))
         final_video = video.set_audio(final_audio)
         final_video.write_videofile(str(output_file),
                                     fps=24,
                                     audio_codec='aac',
                                     audio_bitrate='192k')
+        os.chdir(dir_org)
 
 
 def main():
