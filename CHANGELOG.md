@@ -1,5 +1,14 @@
 # Zoltraak Klein Changelog
 
+## [Unreleased]
+- Upgrade `YAMLManager` class for debug.
+- Full revision of compilers and architects.
+
+## [1.0.7] - 2024-09-25
+### Changed
+- Requirement of LLMMaster updated to 0.5.0 and capped until the next major update.
+- Revised Python version requirement to 3.10 or later to adapt to the latest LLMMaster.
+
 ## [1.0.6] - 2024-08-30
 ### Changed
 - Corrected architect "video_from_presentation.py" to avoid error of access permission for moviepy work file.

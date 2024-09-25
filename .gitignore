@@ -1,6 +1,5 @@
 # Project specific folders
 projects/
-zlvenv/
 demo.py
 
 # Byte-compiled / optimized / DLL files

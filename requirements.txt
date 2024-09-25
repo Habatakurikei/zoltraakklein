@@ -1,0 +1,6 @@
+llmmaster==0.5.0
+flake8
+pytest
+setuptools
+wheel
+twine

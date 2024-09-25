@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="zoltraakklein",
-    version="1.0.6",
+    version="1.0.7",
     author="Daisuke Yamaguchi",
     author_email="daicom0204@gmail.com",
     description="Simplified class for Zoltraak, a digital content production framework by working with LLMs and generative AIs.",
@@ -26,14 +26,13 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
     ],
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=[
-        "llmmaster>=0.3.4",
+        "llmmaster==0.5.0",
         "opencv-python>=4.10.0.84",
         "moviepy>=1.0.3",
     ],

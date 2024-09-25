@@ -107,7 +107,7 @@ def test_multiple_llm(run_api):
             "temperature": 0.5
         }
     }
-    
+
     zk = ZoltraakKlein(request=REQUEST, compiler=COMPILER, verbose=True)
 
     if not isinstance(zk, ZoltraakKlein):

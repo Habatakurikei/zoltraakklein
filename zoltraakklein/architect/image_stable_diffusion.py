@@ -55,7 +55,7 @@ class ArchitectStableDiffusion(ArchitectBase):
             if prompt:
                 params = master.pack_parameters(
                     provider='stable_diffusion_tti',
-                    model='ultra',
+                    model='core',
                     prompt=prompt,
                     aspect_ratio=self.size,
                     negative_prompt=GEN_IMAGE_NEGATIVE_PROMPT)
